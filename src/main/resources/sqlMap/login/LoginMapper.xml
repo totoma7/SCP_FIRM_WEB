@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="LoginMapper">
+
+    <select id="selectUserLoginInfo" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+    SELECT USER_ID        /* 사용자ID */
+         , USER_NM        /* 사용자명 */
+         , USER_EMAIL     /* 사용자 이메일 */
+         , PWD            /* 패스워드 */
+         , USE_YN         /* 사용여부 */
+         , FAIL_DT        /* 최종실패일시 */
+         , FAIL_CNT       /* 실패횟수 */
+         , LOCK_YN        /* 잠김여부 */
+         , LAST_LOGIN_DT
+         , LAST_LOGIN_IP  /* 최종접속 아이피 */
+         , REG_DT         /* 등록일자 */
+         , REG_ID         /* 등록자 */
+         , UPD_DT         /* 수정일자 */
+         , UPD_ID         /* 수정자 */
+      FROM TB_USER_INFO
+     WHERE 1 = 1
+       AND USER_ID = #{USER_ID}
+       AND PWD = #{PWD}
+       AND USE_YN = 'Y'
+    </select>
+
+    <update id="updateUserLoginDt" parameterType="Map">
+    --TransMapper.updateUserLoginDt
+    <![CDATA[
+        UPDATE TB_USER_INFO SET
+               LAST_LOGIN_DT = TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MISS')
+             , LAST_LOGIN_IP = #{LAST_LOGIN_IP}
+             , FAIL_CNT = 0
+         WHERE USER_ID = #{USER_ID}
+    ]]>
+    </update>
+
+
+
+</mapper>

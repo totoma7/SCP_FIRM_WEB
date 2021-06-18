@@ -8,7 +8,7 @@
         data-sap-ui-libs="sap.m"
         data-sap-ui-theme="sap_bluecrystal"
         data-sap-ui-resourceroots='{
-            "ecbank" : "./"
+            "ecbank" : "../"
         }'>
 </script>
 
@@ -22,20 +22,13 @@
     });
     */
 
-    var oView = new sap.ui.view({
-        viewName: "ecbank.view.App",
-        type: "XML"
-    });
-
 
     var oMain = new sap.ui.view({
         viewName: "ecbank.view.Main",
         type: "XML"
     });
 
-    oView.byId("idApp").addPage(oMain);
-
-    oView.placeAt("content");
+    oMain.placeAt("content");
 </script>
 <body class="sapUiBody">
     <div id="content"></div>
