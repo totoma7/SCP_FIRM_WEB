@@ -25,7 +25,7 @@
     </select>
 
     <update id="updateUserLoginDt" parameterType="Map">
-    --TransMapper.updateUserLoginDt
+    --LoginMapper.updateUserLoginDt
     <![CDATA[
         UPDATE TB_USER_INFO SET
                LAST_LOGIN_DT = TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MISS')

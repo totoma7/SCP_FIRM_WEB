@@ -27,7 +27,7 @@ sap.ui.define(
                                 data: JSON.stringify(sData),
                                 contentType : 'application/json;charset=UTF-8',
                                 success:function(data){
-                                    console.log(data);
+                                    resolve(data);
                                 },
                                 error:function(err){
 

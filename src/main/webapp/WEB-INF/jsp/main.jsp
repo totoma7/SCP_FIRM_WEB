@@ -1,10 +1,10 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <title>Sample Page</title>
 </head>
-<script type="text/javascript" src="/static/common/js/common.js"></script>
 <script src="https://sapui5.hana.ondemand.com/resources/sap-ui-core.js"
         data-sap-ui-libs="sap.m"
         data-sap-ui-theme="sap_bluecrystal"
@@ -25,7 +25,7 @@
 
 
     var oMain = new sap.ui.view({
-        viewName: "ecbank.view.Login",
+        viewName: "ecbank.view.Main",
         type: "XML"
     });
 
