@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Sample Page</title>
+</head>
+<script src="https://sapui5.hana.ondemand.com/resources/sap-ui-core.js"
+        data-sap-ui-libs="sap.m"
+        data-sap-ui-theme="sap_bluecrystal"
+        data-sap-ui-resourceroots='{
+            "ecbank" : "./"
+        }'>
+</script>
+
+<script>
+    /*
+    var oBtn = new sap.m.Button({
+        text: "Click Buttom",
+        press: function(){
+            alert('welcom to ui5');
+        }
+    });
+    */
+
+    var oView = new sap.ui.view({
+        viewName: "ecbank.view.App",
+        type: "XML"
+    });
+
+
+    var oMain = new sap.ui.view({
+        viewName: "ecbank.view.Main",
+        type: "XML"
+    });
+
+    oView.byId("idApp").addPage(oMain);
+
+    oView.placeAt("content");
+</script>
+<body class="sapUiBody">
+    <div id="content"></div>
+</body>
+</html>

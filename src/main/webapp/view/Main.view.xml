@@ -1,0 +1,6 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="ecbank.controller.Main">
+
+    <Page title="Welcom to My App">
+        <Button text="loadData" press="onLoadData"></Button>
+    </Page>
+</mvc:View>
