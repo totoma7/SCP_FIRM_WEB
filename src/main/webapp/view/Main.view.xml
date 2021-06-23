@@ -101,7 +101,7 @@
         </tnt:sideContent>
         <tnt:mainContents>
             <NavContainer id="pageContainer" initialPage="page2">
-                <pages>
+                <pages class="sapUiContentPadding">
                     <ScrollContainer
                         id="root1"
                         horizontal="false"
@@ -122,6 +122,15 @@
                         vertical="true"
                         height="100%">
                         <content>
+                            <Label text="Selection Mode" labelFor="select1"/>
+				            <Select id="select1" width="100%" items="{selectionmodel>/selectionitems}" selectedKey="MultiToggle" change="onSelectionModeChange">
+				                <c:Item key="{selectionmodel>key}" text="{selectionmodel>text}"/>
+				            </Select>
+
+				            <Label text="Selection Behavior" labelFor="select2"/>
+				            <Select id="select2" width="100%" items="{selectionmodel>/behavioritems}" selectedKey="RowSelector" change="onBehaviourModeChange">
+				                <c:Item key="{selectionmodel>key}" text="{selectionmodel>text}"/>
+				            </Select>
 				            <t:Table
 				                rows="{/rows}"
 				                selectionMode="MultiToggle"
@@ -140,14 +149,17 @@
 				                            <Text text="{TL_NO}" wrapping="false" />
 				                        </t:template>
 				                    </t:Column>
-				                    <t:Column width="11rem">
-				                        <Label text="이체일자" />
-				                        <t:template>
-				                            <Input value="{TRN_DT}"/>
-				                        </t:template>
-				                    </t:Column>
 
-				                    <t:Column width="11rem">
+				                    <t:Column width="10rem" hAlign="Center">
+                                        <Label text="이체일자" />
+                                        <t:template>
+                                            <DatePicker
+                                                value='{TRN_DT}' valueFormat='yyyyMMdd' displayFormat='yyyy-MM-dd'
+                                            />
+                                        </t:template>
+                                    </t:Column>
+
+				                    <t:Column width="11rem" hAlign="Center">
                                         <Label text="이체일시" />
                                         <t:template>
                                             <Input value="{TRN_TM}"/>
@@ -203,12 +215,14 @@
                                         </t:template>
                                     </t:Column>
 
-                                    <t:Column width="11rem">
-                                        <Label text="등록일시" />
-                                        <t:template>
-                                            <Input value="{REG_DT}"/>
-                                        </t:template>
-                                    </t:Column>
+                                    <t:Column width="10rem" hAlign="Center">
+				                        <Label text="등록일시" />
+				                        <t:template>
+				                            <DatePicker
+				                                value='{REG_DT}' valueFormat='yyyyMMdd' displayFormat='yyyy-MM-dd'
+				                            />
+				                        </t:template>
+				                    </t:Column>
 
 				                </t:columns>
 				            </t:Table>

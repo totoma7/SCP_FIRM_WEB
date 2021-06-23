@@ -23,9 +23,6 @@ sap.ui.define([
 
             // Sample DB Search
             var oJSONModel = this.initSampleDataModel();
-
-            console.log("oJSONModel : " + JSON.stringify(oJSONModel));
-
             this.getView().setModel(oJSONModel);
         },
 
@@ -46,7 +43,7 @@ sap.ui.define([
 
                 success:function(data){
 
-                    //console.log("data : " + JSON.stringify(data));
+                    console.log("data : " + JSON.stringify(data.rows));
 
                     if (typeof data.rows != 'undefined') {
                         oModel.setData(data);

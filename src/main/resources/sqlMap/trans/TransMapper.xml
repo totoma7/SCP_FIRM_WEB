@@ -85,7 +85,7 @@
             ,A.TRN_CNT     --송신회수
             ,A.TL_NO     --전문번호
             ,A.TRN_DT     --전송일자
-            ,A.TRN_TM     --전송시간
+            ,TO_TIME(A.TRN_TM, 'HH12MISS') AS TRN_TM     --전송시간
             ,A.DPST_BNK_CD -- 상대계좌 은행
             ,A.BOOK_YN    --거래원장 여부
             ,B.RSP_CD     --응답코드
