@@ -5,9 +5,9 @@
 <meta charset="UTF-8">
 <title>Sample Page</title>
 </head>
-<script src="https://sapui5.hana.ondemand.com/resources/sap-ui-core.js"
+<script id="sap-ui-bootstrap" src="https://sapui5.hana.ondemand.com/resources/sap-ui-core.js"
         data-sap-ui-libs="sap.m"
-        data-sap-ui-theme="sap_bluecrystal"
+        data-sap-ui-theme="sap_fiori_3"
         data-sap-ui-resourceroots='{
             "ecbank" : "../"
         }'>
@@ -31,7 +31,7 @@
 
     oMain.placeAt("content");
 </script>
-<body class="sapUiBody">
+<body class="sapUiBody sapUiSizeCozy">
     <div id="content"></div>
 </body>
 </html>

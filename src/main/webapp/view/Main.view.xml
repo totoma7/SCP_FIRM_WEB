@@ -123,14 +123,16 @@
                         height="100%">
                         <content>
                             <Label text="Selection Mode" labelFor="select1"/>
-				            <Select id="select1" width="100%" items="{selectionmodel>/selectionitems}" selectedKey="MultiToggle" change="onSelectionModeChange">
-				                <c:Item key="{selectionmodel>key}" text="{selectionmodel>text}"/>
+				            <Select id="select1" width="100%" items="{/CMM_BNK_CD}" change="onSelectionModeChange">
+				                <c:Item key="{CODE}" text="{CODE_NM}"/>
 				            </Select>
 
 				            <Label text="Selection Behavior" labelFor="select2"/>
 				            <Select id="select2" width="100%" items="{selectionmodel>/behavioritems}" selectedKey="RowSelector" change="onBehaviourModeChange">
-				                <c:Item key="{selectionmodel>key}" text="{selectionmodel>text}"/>
+				                <c:Item key="{selectionmodel>key}" text="{CODE_NM}"/>
 				            </Select>
+
+
 				            <t:Table
 				                rows="{/rows}"
 				                selectionMode="MultiToggle"

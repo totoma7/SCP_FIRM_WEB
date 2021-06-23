@@ -24,6 +24,35 @@ sap.ui.define([
             // Sample DB Search
             var oJSONModel = this.initSampleDataModel();
             this.getView().setModel(oJSONModel);
+
+            // Sample DB Combo
+            var oJSONComboModel = this.initSampleComboModel1();
+            this.getView().setModel(oJSONComboModel, "CMM_BNK_CD");
+
+
+        },
+
+        initSampleComboModel1 : function() {
+            var oModel = new JSONModel();
+
+            jQuery.ajax("/code/codeDtlList.do",{
+                type: 'POST',
+                dataType:'json',
+                contentType : 'application/json;charset=UTF-8',
+                data: JSON.stringify({"CODE_GRP_ID": "CMM_BNK_CD"}),
+
+                success:function(data){
+
+                    if (typeof data.rows != 'undefined') {
+                        oModel.setData(data.rows);
+                    }
+                },
+                error: function() {
+                    console.error("failed to load json");
+                }
+            });
+
+            return oModel;
         },
 
         initSampleDataModel : function() {
@@ -42,8 +71,6 @@ sap.ui.define([
                 },
 
                 success:function(data){
-
-                    console.log("data : " + JSON.stringify(data.rows));
 
                     if (typeof data.rows != 'undefined') {
                         oModel.setData(data);

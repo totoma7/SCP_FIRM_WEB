@@ -26,13 +26,7 @@ sap.ui.define(
             var oModel = sap.ui.getCore().getModel();
             var userLoad = oModel.getProperty("/USER");
 
-
-            console.log("userLoad1 : " + JSON.stringify(userLoad));
-            console.log("userLoad2 : " + userLoad);
-
             service.callService("/login.do", "POST", userLoad).then(function(data){
-
-                console.log("data : " + JSON.stringify(data));
 
                 var retCode = data.fields.RET_CODE;
                 var retMsg = data.fields.RET_MSG;

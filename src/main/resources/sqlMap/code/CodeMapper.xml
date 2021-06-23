@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="CodeMapper">
+
+    <!-- 그룹 코드리스트 조회 -->
+    <select id="selectGrpCodeList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+    SELECT CODE_GRP_ID
+         , CODE_GRP_NM
+         , CODE_GRP_DC
+         , USE_YN
+         , REG_DT
+         , REG_ID
+         , UPD_DT
+         , UPD_ID
+      FROM TB_COM_CODE_GRP
+     WHERE 1 = 1
+    <if test='S_CODE_GRP_ID != null and S_CODE_GRP_ID != ""'>
+      AND CODE_GRP_ID LIKE '%' || #{S_CODE_GRP_ID} || '%'
+    </if>
+    <if test='S_CODE_GRP_NM != null and S_CODE_GRP_NM != ""'>
+      AND CODE_GRP_NM LIKE '%' || #{S_CODE_GRP_NM} || '%'
+    </if>
+
+    ORDER BY CODE_GRP_ID ASC
+    </select>
+
+    <!-- 코드리스트 조회 -->
+    <select id="selectCodeList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+    SELECT CODE_GRP_ID
+         , CODE
+         , CODE_NM
+         , CODE_DC
+         , CODE_ORDR
+         , EXT_COL_1
+         , EXT_COL_2
+         , EXT_COL_3
+         , EXT_COL_4
+         , EXT_COL_5
+         , REG_DT
+         , REG_ID
+         , UPD_DT
+         , UPD_ID
+         , IFNULL(USE_YN, 'N') AS USE_YN
+      FROM TB_COM_CODE_DTL
+     WHERE 1 = 1
+       AND CODE_GRP_ID = #{CODE_GRP_ID}
+       <if test='S_CODE != null and S_CODE != ""'>
+       	AND CODE = #{S_CODE}
+       </if>
+     ORDER BY CODE_ORDR ASC
+    </select>
+
+    <!-- 그룹 코드 등록 -->
+    <insert id="insertGrpCode" parameterType="java.util.HashMap">
+	    INSERT INTO TB_COM_CODE_GRP (
+	        CODE_GRP_ID
+	      , CODE_GRP_NM
+	      , CODE_GRP_DC
+	      , USE_YN
+	      , REG_DT
+	      , REG_ID
+	    ) VALUES (
+	        #{CODE_GRP_ID}
+	      , #{CODE_GRP_NM}
+	      , #{CODE_GRP_DC}
+	      , #{USE_YN}
+	      , TO_CHAR(SYSDATE,'YYYYMMDDhhMISS')
+	      , #{REG_ID}
+	    )
+    </insert>
+
+    <!-- 그룹 코드 삭제 -->
+    <delete id="deleteGrpCode" parameterType="java.util.HashMap">
+	    DELETE FROM TB_COM_CODE_GRP
+	     WHERE CODE_GRP_ID = #{CODE_GRP_ID}
+    </delete>
+
+    <!-- 그룹 코드 수정 -->
+    <update id="updateGrpCode" parameterType="java.util.HashMap">
+	    UPDATE TB_COM_CODE_GRP SET
+		       CODE_GRP_NM = #{CODE_GRP_NM}
+		     , CODE_GRP_DC = #{CODE_GRP_DC}
+		     , USE_YN = #{USE_YN}
+		     , UPD_DT = TO_CHAR(SYSDATE,'YYYYMMDDhhMISS')
+		     , UPD_ID = #{UPD_ID}
+	     WHERE CODE_GRP_ID = #{CODE_GRP_ID}
+    </update>
+
+    <!-- 코드 등록 -->
+    <insert id="insertCode" parameterType="java.util.HashMap">
+        INSERT INTO TB_COM_CODE_DTL (
+            CODE_GRP_ID
+          , CODE
+          , CODE_NM
+          , CODE_DC
+          , CODE_ORDR
+          , EXT_COL_1
+          , EXT_COL_2
+          , EXT_COL_3
+          , EXT_COL_4
+          , EXT_COL_5
+          , REG_DT
+          , REG_ID
+          , USE_YN
+        ) VALUES (
+            #{CODE_GRP_ID}
+          , #{CODE}
+          , #{CODE_NM}
+          , #{CODE_DC, jdbcType=VARCHAR}
+          , #{CODE_ORDR}
+          , #{EXT_COL_1, jdbcType=VARCHAR}
+          , #{EXT_COL_2, jdbcType=VARCHAR}
+          , #{EXT_COL_3, jdbcType=VARCHAR}
+          , #{EXT_COL_4, jdbcType=VARCHAR}
+          , #{EXT_COL_5, jdbcType=VARCHAR}
+          , TO_CHAR(SYSDATE,'YYYYMMDDhhMISS')
+          , #{REG_ID}
+          , #{USE_YN}
+        )
+    </insert>
+
+    <!-- 코드 삭제 -->
+    <delete id="deleteCode" parameterType="java.util.HashMap">
+        DELETE FROM TB_COM_CODE_DTL
+         WHERE CODE_GRP_ID = #{CODE_GRP_ID}
+           AND CODE = #{CODE}
+    </delete>
+
+    <!-- 코드 수정 -->
+    <update id="updateCode" parameterType="java.util.HashMap">
+        UPDATE TB_COM_CODE_DTL SET
+               CODE_NM = #{CODE_NM}
+             , CODE_DC = #{CODE_DC, jdbcType=VARCHAR}
+             , CODE_ORDR = #{CODE_ORDR}
+             , EXT_COL_1 = #{EXT_COL_1, jdbcType=VARCHAR}
+             , EXT_COL_2 = #{EXT_COL_2, jdbcType=VARCHAR}
+             , EXT_COL_3 = #{EXT_COL_3, jdbcType=VARCHAR}
+             , EXT_COL_4 = #{EXT_COL_4, jdbcType=VARCHAR}
+             , EXT_COL_5 = #{EXT_COL_5, jdbcType=VARCHAR}
+             , USE_YN = #{USE_YN}
+             , UPD_DT = TO_CHAR(SYSDATE,'YYYYMMDDhhMISS')
+             , UPD_ID = #{UPD_ID}
+         WHERE CODE_GRP_ID = #{CODE_GRP_ID}
+           AND CODE = #{CODE}
+    </update>
+
+    <!-- 공통 지급계좌 조회 -->
+    <select id="selectCmmAcntNoList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+    SELECT CRYPT.DEC_AES(ACNT_NO) AS ACNT_NO
+         , ACNT_NM
+         , MNG_ACN_NM
+         , ACNT_BNK_CD
+         , CPN_CD
+      FROM TB_ACNT_NO
+     WHERE MNG_ACN_NO = #{MNG_ACN_NO}
+       AND ACNT_TYPE = #{ACNT_TYPE}
+       AND OFF_YN = 'Y'
+       AND USE_YN = 'Y'
+     ORDER BY ACNT_NO ASC
+    </select>
+
+    <!-- 공통 지급계좌 상세조회 -->
+    <select id="selectCmmAcntNo" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+    SELECT MNG_ACN_NO
+         , MNG_ACN_NM
+         , ACNT_TYPE
+         , CRYPT.DEC_AES(ACNT_NO) AS ACNT_NO
+         , ACNT_BNK_CD
+         , ACNT_NM
+         , CPN_CD
+      FROM TB_ACNT_NO
+     WHERE MNG_ACN_NO = #{MNG_ACN_NO}
+       AND ACNT_NO = CRYPT.ENC_AES(#{ACNT_NO})
+       AND ACNT_TYPE = #{ACNT_TYPE}
+    </select>
+
+</mapper>
