@@ -3,37 +3,226 @@
     xmlns="sap.m"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns:tnt="sap.tnt"
+    xmlns:t="sap.ui.table"
+    xmlns:u="sap.ui.unified"
+    xmlns:c="sap.ui.core"
     height="100%"
     class="side-navigation-demo">
-    <Button
-        text="Toggle Collapse/Expand"
-        icon="sap-icon://menu2"
-        press=".onCollapseExpandPress" />
-    <Button
-        text="Show/Hide Sub Item 3"
-        icon="sap-icon://menu2"
-        press=".onHideShowSubItemPress" />
-    <tnt:SideNavigation id="sideNavigation" selectedKey="subItem3">
+    <tnt:ToolPage id="toolPage">
+        <tnt:header>
+            <tnt:ToolHeader>
+                <Button
+                    id="sideNavigationToggleButton"
+                    icon="sap-icon://menu2"
+                    type="Transparent"
+                    press=".onSideNavButtonPress">
+                    <layoutData>
+                        <OverflowToolbarLayoutData priority="NeverOverflow" />
+                    </layoutData>
+                </Button>
+                <ToolbarSpacer width="20px" />
+                <Button text="File" type="Transparent">
+                    <layoutData>
+                        <OverflowToolbarLayoutData priority="Low" />
+                    </layoutData>
+                </Button>
+                <Button text="Edit" type="Transparent">
+                    <layoutData>
+                        <OverflowToolbarLayoutData priority="Low" />
+                    </layoutData>
+                </Button>
+                <Button text="View" type="Transparent">
+                    <layoutData>
+                        <OverflowToolbarLayoutData priority="Low" />
+                    </layoutData>
+                </Button>
+                <Button text="Navigate" type="Transparent">
+                    <layoutData>
+                        <OverflowToolbarLayoutData priority="Low" />
+                    </layoutData>
+                </Button>
+                <Button text="Code" type="Transparent">
+                    <layoutData>
+                        <OverflowToolbarLayoutData priority="Low" />
+                    </layoutData>
+                </Button>
+                <Button text="Refactor" type="Transparent">
+                    <layoutData>
+                        <OverflowToolbarLayoutData priority="Low" />
+                    </layoutData>
+                </Button>
+                <Button text="Run" type="Transparent">
+                    <layoutData>
+                        <OverflowToolbarLayoutData priority="Low" />
+                    </layoutData>
+                </Button>
+                <Button text="Tools" type="Transparent">
+                    <layoutData>
+                        <OverflowToolbarLayoutData priority="Low" />
+                    </layoutData>
+                </Button>
+                <tnt:ToolHeaderUtilitySeparator />
+                <ToolbarSpacer>
+                    <layoutData>
+                        <OverflowToolbarLayoutData priority="NeverOverflow" minWidth="20px" />
+                    </layoutData>
+                </ToolbarSpacer>
+                <Button text="Alan Smith" type="Transparent" press=".handleUserNamePress" ariaHasPopup="Menu">
+                    <layoutData>
+                        <OverflowToolbarLayoutData priority="NeverOverflow" />
+                    </layoutData>
+                </Button>
+            </tnt:ToolHeader>
+        </tnt:header>
+        <tnt:sideContent>
+            <tnt:SideNavigation id="sideNavigation" selectedKey="subItem3">
         <tnt:NavigationList>
             <tnt:NavigationListItem text="Item 1" icon="sap-icon://employee">
-                <tnt:NavigationListItem text="Sub Item 1" />
-                <tnt:NavigationListItem text="Sub Item 2" />
-                <tnt:NavigationListItem text="Sub Item 3" id="subItem3" key="subItem3" />
-                <tnt:NavigationListItem text="Sub Item 4" />
+            <tnt:NavigationListItem text="Sub Item 1" />
+            <tnt:NavigationListItem text="Sub Item 2" />
+            <tnt:NavigationListItem text="Sub Item 3" id="subItem3" key="subItem3" />
+            <tnt:NavigationListItem text="Sub Item 4" />
             </tnt:NavigationListItem>
             <tnt:NavigationListItem text="Item 2" icon="sap-icon://building">
-                <tnt:NavigationListItem text="Sub Item 1" />
-                <tnt:NavigationListItem text="Sub Item 2" />
-                <tnt:NavigationListItem text="Sub Item 3" />
-                <tnt:NavigationListItem text="Sub Item 4" />
+            <tnt:NavigationListItem text="Sub Item 1" />
+            <tnt:NavigationListItem text="Sub Item 2" />
+            <tnt:NavigationListItem text="Sub Item 3" />
+            <tnt:NavigationListItem text="Sub Item 4" />
             </tnt:NavigationListItem>
         </tnt:NavigationList>
         <tnt:fixedItem>
             <tnt:NavigationList>
-                <tnt:NavigationListItem text="Item 1" icon="sap-icon://employee" />
-                <tnt:NavigationListItem text="Item 2" icon="sap-icon://building" />
-                <tnt:NavigationListItem text="Item 3" icon="sap-icon://card" />
+            <tnt:NavigationListItem text="Item 1" icon="sap-icon://employee" />
+            <tnt:NavigationListItem text="Item 2" icon="sap-icon://building" />
+            <tnt:NavigationListItem text="Item 3" icon="sap-icon://card" />
             </tnt:NavigationList>
         </tnt:fixedItem>
-    </tnt:SideNavigation>
+        </tnt:SideNavigation>
+        </tnt:sideContent>
+        <tnt:mainContents>
+            <NavContainer id="pageContainer" initialPage="page2">
+                <pages>
+                    <ScrollContainer
+                        id="root1"
+                        horizontal="false"
+                        vertical="true"
+                        height="100%">
+                        <Text text="This is the root page" />
+                    </ScrollContainer>
+                    <ScrollContainer
+                        id="page1"
+                        horizontal="false"
+                        vertical="true"
+                        height="100%">
+                        <Text text="This is the first page" />
+                    </ScrollContainer>
+                    <ScrollContainer
+                        id="page2"
+                        horizontal="false"
+                        vertical="true"
+                        height="100%">
+                        <content>
+				            <t:Table
+				                rows="{/rows}"
+				                selectionMode="MultiToggle"
+				                visibleRowCount="7"
+				                paste="onPaste"
+				                ariaLabelledBy="title">
+				                <t:extension>
+				                    <OverflowToolbar style="Clear">
+				                        <Title id="title" text="거래원장 리스트"/>
+				                    </OverflowToolbar>
+				                </t:extension>
+				                <t:columns>
+				                    <t:Column width="11rem">
+				                        <Label text="전문 번호" />
+				                        <t:template>
+				                            <Text text="{TL_NO}" wrapping="false" />
+				                        </t:template>
+				                    </t:Column>
+				                    <t:Column width="11rem">
+				                        <Label text="이체일자" />
+				                        <t:template>
+				                            <Input value="{TRN_DT}"/>
+				                        </t:template>
+				                    </t:Column>
+
+				                    <t:Column width="11rem">
+                                        <Label text="이체일시" />
+                                        <t:template>
+                                            <Input value="{TRN_TM}"/>
+                                        </t:template>
+                                    </t:Column>
+
+                                    <t:Column width="11rem">
+                                        <Label text="이체건수" />
+                                        <t:template>
+                                            <Input value="{APR_CNT}"/>
+                                        </t:template>
+                                    </t:Column>
+
+                                    <t:Column width="11rem">
+                                        <Label text="이체은행" />
+                                        <t:template>
+                                            <Input value="{DPST_BNK_NM}"/>
+                                        </t:template>
+                                    </t:Column>
+
+                                    <t:Column width="11rem">
+                                        <Label text="진행상태" />
+                                        <t:template>
+                                            <Input value="{TRANS_STAT_NM}"/>
+                                        </t:template>
+                                    </t:Column>
+
+                                    <t:Column width="11rem">
+                                        <Label text="총이체 금액" />
+                                        <t:template>
+                                            <Input value="{WTHD_AMT}"/>
+                                        </t:template>
+                                    </t:Column>
+
+                                    <t:Column width="11rem">
+                                        <Label text="이체 성공건수" />
+                                        <t:template>
+                                            <Input value="{SUCC_CNT}"/>
+                                        </t:template>
+                                    </t:Column>
+
+                                    <t:Column width="11rem">
+                                        <Label text="이체 실패건수" />
+                                        <t:template>
+                                            <Input value="{FAIL_CNT}"/>
+                                        </t:template>
+                                    </t:Column>
+
+                                    <t:Column width="11rem">
+                                        <Label text="등록자" />
+                                        <t:template>
+                                            <Input value="{REG_NM}"/>
+                                        </t:template>
+                                    </t:Column>
+
+                                    <t:Column width="11rem">
+                                        <Label text="등록일시" />
+                                        <t:template>
+                                            <Input value="{REG_DT}"/>
+                                        </t:template>
+                                    </t:Column>
+
+				                </t:columns>
+				            </t:Table>
+				        </content>
+                    </ScrollContainer>
+                    <ScrollContainer
+                        id="root2"
+                        horizontal="false"
+                        vertical="true"
+                        height="100%">
+                        <Text text="This is the root page of the second element" />
+                    </ScrollContainer>
+                </pages>
+            </NavContainer>
+        </tnt:mainContents>
+    </tnt:ToolPage>
 </mvc:View>

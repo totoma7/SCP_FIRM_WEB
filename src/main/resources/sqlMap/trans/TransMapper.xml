@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TransMapper">
+
+    <!-- 거래원장 내역 조회 -->
+    <select id="selectTrnBookList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+    SELECT 	 A.BNK_CD     --은행코드
+			,A.TRN_CNT     --송신회수
+			,A.TL_NO     --전문번호
+			,A.TRN_DT     --전송일자
+			,A.TRN_TM     --전송시간
+			,A.DPST_BNK_CD -- 상대계좌 은행
+			,A.BOOK_YN    --거래원장 여부
+			,B.RSP_CD     --응답코드
+			,CRYPT.DEC_AES(B.TRNS_ACNT_NO) AS TRNS_ACNT_NO     --계좌번호
+			,B.TRNS_BRNC_GR_CD     --거래점 GIRO 코드
+			,( SELECT CODE_NM FROM TB_COM_CODE_DTL WHERE CODE_GRP_ID='WTHD_CNC_DVS' AND CODE=B.DPST_WTHD_CNC_DVS ) DPST_WTHD_CNC_DVS_NM
+			,B.DPST_WTHD_CNC_DVS     --입금/출금/취소 구분
+			,( SELECT CODE_NM FROM TB_COM_CODE_DTL WHERE CODE_GRP_ID='TRNS_DVS_CD' AND CODE=B.TRNS_DVS ) TRNS_DVS_NM     --거래구분
+			,B.TRNS_DVS     --거래구분
+			,B.TRNS_AMT     --거래금액
+			,B.CS_CRT     --현금성
+			,B.WTHLD     --예수금
+			,B.BLN_GN_AFT_TRNS     --거래후 잔액부호
+			,B.BLN_AFT_TRNS     --거래후 잔액
+			,B.DPST_WTHD_PSN_NM     --입/출금자 성명
+			,B.BL_CHK_NO     --어수번호
+			,B.TRNS_DT     --거래일자
+			,B.TRNS_TM     --거래시간
+			,B.TRNS_SNO     --거래일련번호
+			,B.CNC_ORG_TRNS_SNO     --취소시 원거래일련번호
+			,B.ORG_TRNS_DT     --원거래일자
+			,B.CMS_CD_RSDN_NO     --CMS코드 OR 주민(사업자)번호
+			,B.CSS_CHK_AMT     --자기앞수표금액
+			,B.HSH_CHK_AMT     --가계수표금액
+			,B.AT_TRN_DVS     --자동이체구분
+			,CRYPT.DEC_AES(B.PRTN_ACNT_NO) AS PRTN_ACNT_NO     --상대계좌번호
+			,B.TRN_NO     --이체 고유 번호
+			,B.REG_DT     --등록일시
+			,B.REG_ID     --등록자
+      FROM TB_ACCT_TRANS A
+      			LEFT OUTER JOIN TB_ACNT_TRANS_BOOK B
+      			ON (
+      					    LPAD(A.BNK_CD,3,'0') = LPAD(B.BNK_CD,3,'0')
+      					AND A.TRN_CNT = B.TRN_CNT
+      					AND A.TL_NO = B.TL_NO
+      					AND A.TRN_DT = B.TRN_DT
+      					AND A.TRN_TM = B.TRN_TM
+      				)
+         	, TB_ACNT_NO C
+     WHERE 1 = 1
+       AND A.TRANS_STAT = 'Y' -- 이체 진행상태가 완료
+       AND REPLACE(CRYPT.DEC_AES(A.WTHD_ACNT_NO),'-','') = REPLACE(CRYPT.DEC_AES(C.ACNT_NO),'-','')
+	<if test='S_ACNT_NO != null and S_ACNT_NO != ""'>
+      AND REPLACE(CRYPT.DEC_AES(C.ACNT_NO),'-','') = #{S_ACNT_NO}
+    </if>
+	<if test='S_TRNS_SNO != null and S_TRNS_SNO != ""'>
+      AND B.TRNS_SNO LIKE '%' || #{S_TRNS_SNO} || '%'
+    </if>
+	<if test='S_BNK_CD != null and S_BNK_CD != ""'>
+      AND A.DPST_BNK_CD = #{S_BNK_CD}
+    </if>
+	<if test='S_PRTN_ACNT_NO != null and S_PRTN_ACNT_NO != ""'>
+      AND REPLACE(CRYPT.DEC_AES(B.PRTN_ACNT_NO),'-','') = #{S_PRTN_ACNT_NO}
+    </if>
+	<if test='S_FROM_DT != null and S_FROM_DT != ""'>
+      AND A.TRN_DT <![CDATA[>=]]> #{S_FROM_DT}
+    </if>
+    <if test='S_TO_DT != null and S_TO_DT != ""'>
+      AND A.TRN_DT <![CDATA[<=]]> #{S_TO_DT}
+    </if>
+    <if test='S_WTHD_CNC_DVS != null and S_WTHD_CNC_DVS != ""'>
+      AND B.DPST_WTHD_CNC_DVS = #{S_WTHD_CNC_DVS}
+    </if>
+    <if test='S_BOOK_YN != null and S_BOOK_YN != ""'>
+      AND A.BOOK_YN = #{S_BOOK_YN}
+    </if>
+
+    ORDER BY TRN_DT,TRN_TM, TL_NO  ASC
+    </select>
+
+    <!-- 거래원장 내역 샘플 조회 -->
+    <select id="selectTrnBookListSample" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+    SELECT   A.BNK_CD     --은행코드
+            ,A.TRN_CNT     --송신회수
+            ,A.TL_NO     --전문번호
+            ,A.TRN_DT     --전송일자
+            ,A.TRN_TM     --전송시간
+            ,A.DPST_BNK_CD -- 상대계좌 은행
+            ,A.BOOK_YN    --거래원장 여부
+            ,B.RSP_CD     --응답코드
+            ,B.TRNS_BRNC_GR_CD     --거래점 GIRO 코드
+            ,( SELECT CODE_NM FROM TB_COM_CODE_DTL WHERE CODE_GRP_ID='WTHD_CNC_DVS' AND CODE=B.DPST_WTHD_CNC_DVS ) DPST_WTHD_CNC_DVS_NM
+            ,B.DPST_WTHD_CNC_DVS     --입금/출금/취소 구분
+            ,( SELECT CODE_NM FROM TB_COM_CODE_DTL WHERE CODE_GRP_ID='TRNS_DVS_CD' AND CODE=B.TRNS_DVS ) TRNS_DVS_NM     --거래구분
+            ,B.TRNS_DVS     --거래구분
+            ,B.TRNS_AMT     --거래금액
+            ,B.CS_CRT     --현금성
+            ,B.WTHLD     --예수금
+            ,B.BLN_GN_AFT_TRNS     --거래후 잔액부호
+            ,B.BLN_AFT_TRNS     --거래후 잔액
+            ,B.DPST_WTHD_PSN_NM     --입/출금자 성명
+            ,B.BL_CHK_NO     --어수번호
+            ,B.TRNS_DT     --거래일자
+            ,B.TRNS_TM     --거래시간
+            ,B.TRNS_SNO     --거래일련번호
+            ,B.CNC_ORG_TRNS_SNO     --취소시 원거래일련번호
+            ,B.ORG_TRNS_DT     --원거래일자
+            ,B.CMS_CD_RSDN_NO     --CMS코드 OR 주민(사업자)번호
+            ,B.CSS_CHK_AMT     --자기앞수표금액
+            ,B.HSH_CHK_AMT     --가계수표금액
+            ,B.AT_TRN_DVS     --자동이체구분
+            ,B.TRN_NO     --이체 고유 번호
+            ,B.REG_DT     --등록일시
+            ,B.REG_ID     --등록자
+      FROM TB_ACCT_TRANS A
+                LEFT OUTER JOIN TB_ACNT_TRANS_BOOK B
+                ON (
+                            LPAD(A.BNK_CD,3,'0') = LPAD(B.BNK_CD,3,'0')
+                        AND A.TRN_CNT = B.TRN_CNT
+                        AND A.TL_NO = B.TL_NO
+                        AND A.TRN_DT = B.TRN_DT
+                        AND A.TRN_TM = B.TRN_TM
+                    )
+            , TB_ACNT_NO C
+     WHERE 1 = 1
+       AND A.TRANS_STAT = 'Y' -- 이체 진행상태가 완료
+    ORDER BY TRN_DT,TRN_TM, TL_NO  ASC
+    </select>
+
+    <insert id="insertAcctTrans" parameterType="Map">
+    --TransMapper.insertAcctTrans
+    <![CDATA[
+        INSERT INTO TB_ACCT_TRANS
+        (
+             TRN_NO              /* 이체번호 */
+			,TRN_CNT             /* 송신회수 */
+			,TL_NO               /* 전문번호 */
+			,TRN_DT              /* 전송일자 */
+			,TRN_TM              /* 전송시간 */
+			,RSP_CD              /* 응답코드 */
+			,WTHD_ACNT_NO        /* 출금계좌번호 */
+			,ACNT_SCR_NO         /* 통장비밀번호 */
+			,RV_SGN              /* 복기부호 */
+			,WTHD_AMT            /* 출금금액 */
+			,WTHD_BLN_SGN        /* 출금후잔액부호 */
+			,WTHD_BLN            /* 출금후잔액 */
+			,DPST_BNK_CD         /* 입금은행코드 */
+			,DPST_ACNT_NO        /* 입금계좌번호 */
+			,FEE                 /* 수수료 */
+			,CMS_CD              /* CMS코드 */
+			,SMR                 /* 적요 */
+			,DPST_ACNT_RSDN_NO   /* 입금계좌 주민번호 */
+			,DPST_ACNT_ACNT_NM   /* 입금계좌 예금주명 */
+			,TRANS_TYPE          /* 이체구분 I : 즉시이체 , R : 예약이체 */
+            ,WTHD_PMT_AMT        /* 현 잔액 */
+            ,NM_API_NO           /* 성명조회 API_NO */
+            ,APR_NO              /* 결재번호 */
+            ,BNK_CD              /* 은행코드 */
+            ,REG_ID
+            ,REG_DT
+            ,DPST_ACNT_MNG_NM
+        ) VALUES (
+             #{TRN_NO, jdbcType=VARCHAR}
+            ,#{TRN_CNT, jdbcType=NUMERIC}
+            ,#{TL_NO, jdbcType=NUMERIC}
+            ,#{TRN_DT, jdbcType=VARCHAR}
+            ,#{TRN_TM, jdbcType=VARCHAR}
+            ,#{RSP_CD, jdbcType=VARCHAR}
+            ,CRYPT.ENC_AES(#{WTHD_ACNT_NO, jdbcType=VARCHAR})
+            ,CRYPT.ENC_AES(NVL(#{ACNT_SCR_NO, jdbcType=VARCHAR},' '))
+            ,#{RV_SGN, jdbcType=VARCHAR}
+            ,#{WTHD_AMT, jdbcType=NUMERIC}
+            ,#{WTHD_BLN_SGN, jdbcType=VARCHAR}
+            ,#{WTHD_BLN, jdbcType=VARCHAR}
+            ,#{DPST_BNK_CD, jdbcType=VARCHAR}
+            ,CRYPT.ENC_AES(#{DPST_ACNT_NO, jdbcType=VARCHAR})
+            ,#{FEE, jdbcType=NUMERIC}
+            ,#{CMS_CD, jdbcType=VARCHAR}
+            ,#{SMR, jdbcType=VARCHAR}
+            ,#{DPST_ACNT_RSDN_NO, jdbcType=VARCHAR}
+            ,#{DPST_ACNT_ACNT_NM, jdbcType=VARCHAR}
+            ,#{TRANS_TYPE, jdbcType=VARCHAR}
+            ,#{WTHD_PMT_AMT, jdbcType=VARCHAR}
+            ,#{NM_API_NO, jdbcType=VARCHAR}
+            ,#{APR_NO, jdbcType=VARCHAR}
+            ,#{BNK_CD, jdbcType=VARCHAR}
+            ,#{REG_ID, jdbcType=VARCHAR}
+            ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+            ,#{DPST_ACNT_MNG_NM, jdbcType=VARCHAR}
+        )
+    ]]>
+    </insert>
+
+    <select id="selectTransList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        SELECT *
+          FROM (
+		        SELECT COUNT(APR_NO) OVER() AS TOT_CNT
+				     , ROW_NUMBER() OVER(ORDER BY REG_DT DESC) AS RNUM
+				     , APR_NO
+				     , TRN_DT
+				     , TRN_TM
+				     , S_TRN_DT
+				     , APR_CNT
+				     , DPST_BNK_CD
+				     , (SELECT CODE_NM FROM TB_COM_CODE_DTL WHERE CODE_GRP_ID = 'CMM_BNK_CD' AND CODE = DPST_BNK_CD) AS DPST_BNK_NM
+				     , TRANS_STAT
+				     , (SELECT CODE_NM FROM TB_COM_CODE_DTL WHERE CODE_GRP_ID = 'TRNS_STAT_CD' AND CODE = TRANS_STAT) AS TRANS_STAT_NM
+				     , WTHD_AMT
+				     , SUCC_CNT
+				     , FAIL_CNT
+				     , REG_ID
+				     , (SELECT USER_NM FROM TB_USER_INFO WHERE USER_ID = A.REG_ID) AS REG_NM
+				     , REG_DT
+				  FROM (
+				        SELECT A.APR_NO
+				             , TO_CHAR(TO_DATE(MAX(A.TRN_DT), 'YYYYMMDD'), 'YYYY-MM-DD') AS TRN_DT
+				             , TO_CHAR(TO_DATE(MAX(A.TRN_TM), 'HH24MISS'), 'HH24:MI:SS') AS TRN_TM
+				             , MAX(A.TRN_DT) AS S_TRN_DT
+				             , COUNT(A.APR_NO) AS APR_CNT
+				             , MAX(A.DPST_BNK_CD) AS DPST_BNK_CD
+				             , MAX(DECODE(A.TRANS_STAT, 'E', 'Y', A.TRANS_STAT)) AS TRANS_STAT
+				             , (SELECT SUM(WTHD_AMT) FROM TB_ACCT_TRANS WHERE APR_NO = A.APR_NO) AS WTHD_AMT
+				             , (SELECT COUNT(APR_NO) FROM TB_ACCT_TRANS WHERE APR_NO IN A.APR_NO AND TRANS_STAT = 'Y') AS SUCC_CNT
+				             , (SELECT COUNT(APR_NO) FROM TB_ACCT_TRANS WHERE APR_NO IN A.APR_NO AND TRANS_STAT = 'E') AS FAIL_CNT
+				             , MAX(A.REG_ID) AS REG_ID
+				             , TO_CHAR(TO_DATE(MAX(A.REG_DT), 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') AS REG_DT
+				          FROM TB_ACCT_TRANS A
+				        GROUP BY A.APR_NO
+				      ) A
+		 )
+		 WHERE 1 = 1
+        <if test='S_APR_NO != null and S_APR_NO != ""'>
+          AND APR_NO = #{S_APR_NO}
+        </if>
+        <if test='S_TRN_DT != null and S_TRN_DT != ""'>
+          AND S_TRN_DT = #{S_TRN_DT}
+        </if>
+        <if test='S_TRNS_STAT_CD != null and S_TRNS_STAT_CD != ""'>
+          AND TRANS_STAT = #{S_TRNS_STAT_CD}
+        </if>
+        <if test='S_CMM_BNK_CD != null and S_CMM_BNK_CD != ""'>
+          AND DPST_BNK_CD = #{S_CMM_BNK_CD}
+        </if>
+        <if test='S_REG_NM != null and S_REG_NM != ""'>
+          AND REG_NM LIKE '%' || #{S_REG_NM} || '%'
+        </if>
+
+    </select>
+
+
+    <select id="selectTransDetailList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	    SELECT *
+	      FROM (
+			    SELECT BNK_CD                                                                                                           /* 출금은행 */
+			         , (SELECT CODE_NM FROM TB_COM_CODE_DTL WHERE CODE_GRP_ID = 'CMM_BNK_CD' AND CODE = BNK_CD) AS BNK_NM
+			         , CRYPT.DEC_AES(WTHD_ACNT_NO) AS WTHD_ACNT_NO                                                                      /* 출금계좌번호 */
+		             , DPST_BNK_CD                                                                                                      /* 입금은행코드 */
+		             , (SELECT CODE_NM FROM TB_COM_CODE_DTL WHERE CODE_GRP_ID = 'CMM_BNK_CD' AND CODE = DPST_BNK_CD) AS DPST_BNK_NM
+		             , CRYPT.DEC_AES(DPST_ACNT_NO) AS DPST_ACNT_NO                                                                      /* 입금계좌번호 */
+		             , DPST_ACNT_ACNT_NM                                                                                                /* 입금계좌 예금주명 */
+		             , DPST_ACNT_MNG_NM                                                                                                 /* 관리 고객명 */
+		             , WTHD_AMT                                                                                                         /* 출금금액 */
+		             , SMR                                                                                                              /* 적요*/
+		             , TO_CHAR(TO_DATE(TRN_TM, 'HH24MISS'), 'HH24:MI:SS') AS TRN_TM
+		             , TRANS_STAT
+		             , (SELECT CODE_NM FROM TB_COM_CODE_DTL WHERE CODE_GRP_ID = 'TRNS_STAT_CD' AND CODE = TRANS_STAT) AS TRANS_STAT_NM
+		             , TL_NO                                                                                                           /* 이체 고유키 */
+		             , DECODE(TRANS_STAT, 'E', ERR_MSG, '') AS ERR_MSG
+		             , (SELECT USER_NM FROM TB_USER_INFO WHERE USER_ID = REG_ID) AS REG_NM
+			      FROM TB_ACCT_TRANS
+			     WHERE APR_NO = #{S_APR_NO}
+			        <if test='S_TRN_DT != null and S_TRN_DT != ""'>
+			           AND S_TRN_DT = #{S_TRN_DT}
+			        </if>
+			        <if test='S_TRNS_STAT_CD != null and S_TRNS_STAT_CD != ""'>
+			           AND TRANS_STAT = #{S_TRNS_STAT_CD}
+			        </if>
+			        <if test='S_CMM_BNK_CD != null and S_CMM_BNK_CD != ""'>
+			           AND DPST_BNK_CD = #{S_CMM_BNK_CD}
+			        </if>
+			   )
+		 WHERE 1 = 1
+		    <if test='S_REG_NM != null and S_REG_NM != ""'>
+		       AND REG_NM LIKE '%' || #{S_REG_NM} || '%'
+	        </if>
+    </select>
+
+	<select id="selectVrtList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	    SELECT VIT_NO                 /* 가상계좌번호 */
+		     , MEMBER_ID              /* 회원사 ID */
+		     , MEMBER_NM              /* 고객명 (입금시 해당 가상계좌 수취인 ) */
+		     , PAYMENT_NM             /* 입금자 */
+		     , PAY_POLICY             /* 입급제한(N : 입금 미제한, Y : 입금 제한) */
+		     , PAY_USE_YN             /* 입금계좌사용유무(Y:사용, N: 미사용) */
+		     , PERIOD_DT_POLICY       /* 입금가능기간(N:기간없음, Y:기간설정) */
+		     , PAY_FROM_DT            /* 입금시작날짜 */
+		     , PAY_TO_DT              /* 입금마지막날짜 */
+		     , PERIOD_TIME_POLICY     /* 입금가능시간(N:제한없음, Y:시간설정) */
+		     , TO_CHAR(TO_DATE(PAY_FROM_TIME, 'HH24:MI'), 'HH24:MI') AS PAY_FROM_TIME          /* 입금시작시간 */
+		     , TO_CHAR(TO_DATE(PAY_TO_TIME, 'HH24:MI'), 'HH24:MI') AS PAY_TO_TIME            /* 입금마지막시간 */
+		     , PAY_CNT                /* 입금 가능 횟수 */
+		     , POTENTAIL_YN           /* 입금구분(1:자유입금,2:정액입금) */
+		     , POTENTAIL_AMT          /* 정액입금 금액 */
+		     , REG_DT                 /* 등록일자 */
+		     , REG_ID                 /* 등록자 */
+		     , UPD_DT                 /* 수정일자 */
+		     , UPD_ID                 /* 수정자 */
+		FROM TB_VIT_NO
+	   WHERE 1=1
+
+        <if test='S_VIT_NO != null and S_VIT_NO != ""'>
+            AND VIT_NO LIKE '%' || #{S_VIT_NO} || '%'
+        </if>
+
+        <if test='S_PAYMENT_NM != null and S_PAYMENT_NM != ""'>
+            AND PAYMENT_NM LIKE '%' || #{S_PAYMENT_NM} || '%'
+        </if>
+
+        <if test='S_PAY_POLICY != null and S_PAY_POLICY != ""'>
+            AND PAY_POLICY = #{S_PAY_POLICY}
+        </if>
+
+        <if test='S_PAY_FROM_DT != null and S_PAY_FROM_DT != ""'>
+            AND PAY_FROM_DT = #{S_PAY_FROM_DT}
+        </if>
+
+        <if test='S_PAY_TO_DT != null and S_PAY_TO_DT != ""'>
+            AND PAY_TO_DT = #{S_PAY_TO_DT}
+        </if>
+
+        <if test='S_PAY_FROM_TIME != null and S_PAY_FROM_TIME != ""'>
+            AND PAY_FROM_TIME = #{S_PAY_FROM_TIME}
+        </if>
+
+        <if test='S_PAY_TO_TIME != null and S_PAY_TO_TIME != ""'>
+            AND PAY_TO_TIME = #{S_PAY_TO_TIME}
+        </if>
+
+
+	   ORDER BY VIT_NO DESC
+	</select>
+
+
+	<select id="selectVrtDetail" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        SELECT VIT_NO                 /* 가상계좌번호 */
+             , MEMBER_ID              /* 회원사 ID */
+             , MEMBER_NM              /* 고객명 (입금시 해당 가상계좌 수취인 ) */
+             , PAYMENT_NM             /* 입금자 */
+             , PAY_POLICY             /* 입급제한(N : 입금 미제한, Y : 입금 제한) */
+             , PAY_USE_YN             /* 입금계좌사용유무(Y:사용, N: 미사용) */
+             , PERIOD_DT_POLICY       /* 입금가능기간(N:기간없음, Y:기간설정) */
+             , PAY_FROM_DT            /* 입금시작날짜 */
+             , PAY_TO_DT              /* 입금마지막날짜 */
+             , PERIOD_TIME_POLICY     /* 입금가능시간(N:제한없음, Y:시간설정) */
+             , TO_CHAR(TO_DATE(PAY_FROM_TIME, 'HH24:MI'), 'HH24:MI') AS PAY_FROM_TIME          /* 입금시작시간 */
+             , TO_CHAR(TO_DATE(PAY_TO_TIME, 'HH24:MI'), 'HH24:MI') AS PAY_TO_TIME            /* 입금마지막시간 */
+             , PAY_CNT                /* 입금 가능 횟수 */
+             , POTENTAIL_YN           /* 입금구분(1:자유입금,2:정액입금) */
+             , POTENTAIL_AMT          /* 정액입금 금액 */
+             , REG_DT                 /* 등록일자 */
+             , REG_ID                 /* 등록자 */
+             , UPD_DT                 /* 수정일자 */
+             , UPD_ID                 /* 수정자 */
+        FROM TB_VIT_NO
+       WHERE VIT_NO = #{VIT_NO}
+   </select>
+
+</mapper>

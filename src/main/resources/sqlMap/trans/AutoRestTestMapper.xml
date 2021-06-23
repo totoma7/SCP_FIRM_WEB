@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="AutoRestTestMapper">
+
+	<select id="selectData" parameterType="hashmap" resultType="hashmap">
+		SELECT 	 TRN_NO
+				,BNK_CD
+				,TRN_CNT
+				,TL_NO
+				,TRN_DT
+				,TRN_TM
+				,RSP_CD
+				,WTHD_ACNT_NO
+				,ACNT_SCR_NO
+				,RV_SGN
+				,WTHD_AMT
+				,WTHD_BLN_SGN
+				,WTHD_BLN
+				,DPST_BNK_CD
+				,DPST_ACNT_NO
+				,FEE
+				,CMS_CD
+				,SMR
+				,DPST_ACNT_RSDN_NO
+				,DPST_ACNT_ACNT_NM
+				,TRANS_TYPE
+				,RESERVE_TRANS_TIME
+				,WTHD_ACNT_ALIAS
+				,WTHD_PMT_AMT
+				,DPST_ACNT_MNG_NM
+				,WTHD_ACMT_SMR
+				,TRANS_STAT
+				,ERR_MSG
+				,DPST_ACNT_YN
+				,NM_API_NO
+				,SGN
+				,DLG_BLN
+				,BLN_API_NO
+				,BOOK_API_NO
+				,BOOK_YN
+				,RESULT_SEARCH_YN
+				,APR_NO
+				,REG_DT
+				,REG_ID
+		FROM TB_ACCT_TRANS
+	   WHERE TRN_NO = #{S_TRN_NO}
+	</select>
+
+	<insert id="insertTestData" parameterType="hashmap">
+		INSERT INTO TB_ACNT_TRANS_BOOK
+		(BNK_CD
+		,TRN_CNT
+		,TL_NO
+		,TRN_DT
+		,TRN_TM
+		,RSP_CD
+		,TRNS_ACNT_NO
+		,TRNS_BRNC_GR_CD
+		,DPST_WTHD_CNC_DVS
+		,TRNS_DVS
+		,TRNS_AMT
+		,CS_CRT
+		,WTHLD
+		,BLN_GN_AFT_TRNS
+		,BLN_AFT_TRNS
+		,DPST_WTHD_PSN_NM
+		,BL_CHK_NO
+		,TRNS_DT
+		,TRNS_TM
+		,TRNS_SNO
+		,CNC_ORG_TRNS_SNO
+		,ORG_TRNS_DT
+		,CMS_CD_RSDN_NO
+		,CSS_CHK_AMT
+		,HSH_CHK_AMT
+		,AT_TRN_DVS
+		,PRTN_ACNT_NO
+		,TRN_NO
+		,REG_DT
+		,REG_ID
+		) VALUS
+		SELECT (
+		)
+	</insert>
+
+</mapper>
